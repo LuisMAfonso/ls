@@ -1,0 +1,28 @@
+[
+    {
+        "id": "other",
+        "type": "button",
+        "view": "link",
+        "circle": true,
+        "color": "secondary",
+        "icon": "mdi mdi-menu"
+    },
+    {
+        "id": "add",
+        "icon": "mdi mdi-plus",
+        "value": "Add"
+    },
+    {
+        "type": "separator"
+    },
+    {
+        "id": "edit",
+        "value": "Edit"
+    },
+    {
+        "id": "search",
+        "type": "input",
+        "placeholder": "Search",
+        "icon": "mdi mdi-magnify"
+    },
+]

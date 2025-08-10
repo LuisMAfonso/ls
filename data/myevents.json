@@ -1,0 +1,7 @@
+{
+  "data": [
+      { "id": "2", "start_date": "2025-03-26 00:00:00", "end_date": "2025-03-28 00:00:00", "text": "French Open", "details": "Philippe-Chatrier Court\n Paris, FRA", "subject": "math"},
+      { "id": "3", "start_date": "2025-03-27 09:00:00", "end_date": "2025-03-27 13:00:00", "text": "Aegon Championship", "details": "The Queens Club\n London, ENG", "subject": "science"},
+      { "id": "4", "start_date": "2025-03-28 12:00:00", "end_date": "2025-03-28 16:00:00", "text": "Wimbledon", "details": "Wimbledon\n June 21, 2009 - July 5, 2009", "subject": "english"}
+    ]
+}

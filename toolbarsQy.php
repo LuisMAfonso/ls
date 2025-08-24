@@ -20,6 +20,15 @@ if ( $t == 'exp_daed' ) {
     {  "id": "delete", "icon": "mdi mdi-credit-card-remove-outline", "value": "Delete" }
     ]');
 }
+if ( $t == 'rt_sp' ) {
+    print_r('[
+    { "type": "datePicker", "id": "dtFrom", "editable": true, "weekStart": "monday", "weekNumbers": false, "mode": "calendar", "width": "90px", "tooltip": "start date", "placeholder": "from", "value": "", "dateFormat": "%Y-%m-%d" },
+    { "type": "datePicker", "id": "dtTo", "editable": true, "weekStart": "monday", "weekNumbers": false, "mode": "calendar", "width": "90px", "tooltip": "start date", "placeholder": "to", "value": "", "dateFormat": "%Y-%m-%d"  },
+    { "type": "separator" },
+    { "id": "proj", "icon": "mdi mdi-land-plots-marker", "value": "By Project", "group": "byWhat", "active": "true" },
+    { "id": "staff", "icon": "mdi mdi-human-queue", "value": "By Staff", "group": "byWhat" }
+    ]');
+}
 if ( $t == 'a_c_r' ) {
     print_r('[
     { "id": "add", "icon": "mdi mdi-account-plus-outline", "value": "Add" },

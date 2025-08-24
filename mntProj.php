@@ -479,6 +479,12 @@ require_once('sidebar.php');
             pLng = obj.projLng;
             pAvatar = obj.projAvatar;
             showContent();
+            dhx.ajax.get("mntProjQy.php?t=projDate&r="+row.projId).then(function (data) {
+                obj1 = JSON.parse(data);
+                projForm.setValue(obj1);
+            }).catch(function (err) {
+                console.log(err);
+            });
         }).catch(function (err) {
             console.log(err);
         });

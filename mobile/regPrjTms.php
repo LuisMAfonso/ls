@@ -369,7 +369,7 @@ function addMultiTime(argument) {
                 allSel = '[';
                 firstRec = 1;
                 dsTStaff.forEach(function (item, index, array) {
-//                        console.log(JSON.stringify(item)+" - "+JSON.stringify(index)+" : "+JSON.stringify(array)); 
+//                    console.log(JSON.stringify(item)); 
                     wItem = JSON.parse(JSON.stringify(item));
                     if ( wItem.selStaff == true ) {
                         if ( firstRec == 0 ) allSel += ', ';
@@ -378,7 +378,7 @@ function addMultiTime(argument) {
                     }
                 });
                 allSel += ']';
-                console.log(allSel);
+//                console.log(allSel);
                 wDate = mtForm.getItem("date").getValue();
                 dhx.ajax.post("../addProjTimeWr.php?t=mWr&p="+wSelected+"&d="+wDate, allSel).then(function (data) {
                     console.log(data);
@@ -493,6 +493,18 @@ function selWorks(argument) {
     tbWd.events.on("click", function(id,e){
         console.log(id);
         if ( id == 'select' ) { 
+            selWorkdone = '';
+            firstRec = 1;
+            dsWd.forEach(function (item, index, array) {
+                wWordD = JSON.parse(JSON.stringify(item));
+                if ( wWordD.selWorks == true ) {
+                    if ( firstRec == 0 ) selWorkdone += ', ';
+                    if ( firstRec == 1 ) firstRec = 0;
+                    selWorkdone += wWordD.workDone;
+                }
+            });
+            mtForm.getItem("workDone").setValue(selWorkdone);
+            console.log(selWorkdone);
             gWd.destructor();
             tbWd.destructor();
             dhxW1.destructor(); 
@@ -502,6 +514,7 @@ function selWorks(argument) {
     gWd = new dhx.Grid(null, {
         columns: [
             { width: 40, id: "id", header: [{ text: "N." }], autoWidth: true, hidden: true },
+            { width:45, id: "selWorks", type: "boolean" ,header: [{ text: "Sel." }], htmlEnable: true, align: "center", hidden: false},               
             { width: 0, minWidth: 100, id: "workDone", header: [{ text: "Works" }], autoWidth: true },
         ],
         editable: true,
@@ -513,8 +526,8 @@ function selWorks(argument) {
     gWd.events.on("cellClick", function(row,column){
         console.log(row.Id+" - "+column.id);
 
-        selWorkdone = row.workDone;
-        mtForm.getItem("workDone").setValue(selWorkdone);
+//        selWorkdone = row.workDone;
+//        mtForm.getItem("workDone").setValue(selWorkdone);
 
     });
 

@@ -44,7 +44,8 @@ require_once('sidebar.php');
 			scheduler.config.tooltip_offset_x = 30;
 			
 			scheduler.plugins({
-			    tooltip: true
+			    tooltip: true,
+			    cookie: true
 			});
 			scheduler.templates.tooltip_text = function(start,end,event) {
 			    return "<b>Staff:</b> "+event.text+"<br/><b>Start date:</b> "+

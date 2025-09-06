@@ -190,6 +190,22 @@ require_once('sidebar.php');
             console.log(id);
             if ( id == 'edit' ) { requestDetailsServiceAdd(); }
             if ( id == 'add' )  { wSelDet = 0; requestDetailsServiceAdd(); }
+            if ( id == 'delete' ) {  
+                wMessage = {
+                    header: "Delete ", text: "Confirm request service deletion?", buttons: ["no", "yes"], buttonsAlignment: "center",
+                };   
+                dhx.confirm(wMessage).then(function(answer){
+                    if (answer) {
+                        console.log(answer);
+                        dhx.ajax.get("requestsWr.php?t=dels&r="+wSelDet).then(function (data) {
+                            tbReqDet.disable(['edit', 'delete']); 
+                            loadReqDetailsService();
+                    }).catch(function (err) {
+                                console.log(err);
+                        });
+                    }
+                });         
+            }
         });
 
         gReqDetails = new dhx.Grid(null, {
@@ -384,6 +400,22 @@ require_once('sidebar.php');
             console.log(id);
             if ( id == 'edit' ) { requestDetailsProductAdd(); }
             if ( id == 'add' )  { wSelDet = 0; requestDetailsProductAdd(); }
+            if ( id == 'delete' ) {  
+                wMessage = {
+                    header: "Delete ", text: "Confirm request product deletion?", buttons: ["no", "yes"], buttonsAlignment: "center",
+                };   
+                dhx.confirm(wMessage).then(function(answer){
+                    if (answer) {
+                        console.log(answer);
+                        dhx.ajax.get("requestsWr.php?t=delp&r="+wSelDet).then(function (data) {
+                            tbReqDet.disable(['edit', 'delete']); 
+                            loadReqDetailsProduct();
+                    }).catch(function (err) {
+                                console.log(err);
+                        });
+                    }
+                });         
+            }
         });
 
         gReqDetails = new dhx.Grid(null, {

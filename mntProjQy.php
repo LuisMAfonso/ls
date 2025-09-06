@@ -10,9 +10,9 @@ if ( $t == 'projects' ) {
 
   $sql = "SELECT projId, projName, projCity, ps.prjStatusName, pp.prjPrioName, pt.prjTypeName, (CASE projDesign WHEN 1 THEN 'Yes' ELSE 'No' END) as projDesign, projStatus, projPrioLevel, projTypeSite, isnull(projDesign,0) as projDesignId, calColor
           FROM projects prj 
-          INNER JOIN tblProjectPrio pp on pp.prjPrioId = isnull(projPrioLevel,1)
-          INNER JOIN tblProjectType pt on pt.prjTypeId = isnull(projTypeSite,1)
-          INNER JOIN tblProjectStatus ps on ps.prjStatusId = isnull(projStatus,1)
+          INNER JOIN tblProjectPrio pp on pp.prjPrioId = (CASE isnull(projPrioLevel,1) WHEN 0 THEN 1 ELSE isnull(projPrioLevel,1) END)
+          INNER  JOIN tblProjectType pt on pt.prjTypeId = (CASE isnull(projTypeSite,1) WHEN 0 THEN 1 ELSE isnull(projTypeSite,1) END)
+          INNER JOIN tblProjectStatus ps on ps.prjStatusId = (CASE isnull(projStatus,1) WHEN 0 THEN 1 ELSE isnull(projStatus,1) END)
           where isnull(prj.isDeleted,0) = 0
           order by projName";
 //    $db->debug=1;

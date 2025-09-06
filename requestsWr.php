@@ -100,7 +100,20 @@ if ( $t == 'del' ) {
         $db->debug=1;
         $rows_emps = $db->Execute($sql);
 }
-
+if ( $t == 'dels' ) {
+        $sql = "UPDATE RequestServices 
+                SET isDeleted = 1, deleteStamp = getdate(), deleteUser = '$user'
+                WHERE reqsId = ".$r;
+        $db->debug=1;
+        $rows_emps = $db->Execute($sql);
+}
+if ( $t == 'delp' ) {
+        $sql = "UPDATE RequestProducts 
+                SET isDeleted = 1, deleteStamp = getdate(), deleteUser = '$user'
+                WHERE reqpId = ".$r;
+        $db->debug=1;
+        $rows_emps = $db->Execute($sql);
+}
 function getPost()
 {
     if(!empty($_POST))

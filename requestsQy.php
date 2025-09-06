@@ -152,7 +152,7 @@ if ( $t == 'requests' ) {
     $sql = "SELECT reqsId, reqsCode, reqsName, reqsQuant, reqsPrice, reqsNotes, reqsSfamId, sf.sfamIcon
           FROM RequestServices rs
           LEFT JOIN tblSubFamily sf on sf.sfamId = rs.reqsSfamId
-          WHERE rs.reqId = $r 
+          WHERE rs.reqId = $r and isnull(rs.isDeleted,0) = 0
           ORDER BY reqsId ";
         //    $db->debug=1;
     $rows_emps = $db->Execute($sql);
@@ -160,7 +160,7 @@ if ( $t == 'requests' ) {
     $sql = "SELECT reqpId, reqpArticle, reqpName, reqpQuant, reqpPrice, reqpNotes, reqpSfamId, sf.sfamIcon
             FROM RequestProducts rp
             LEFT JOIN tblSubFamily sf on sf.sfamId = rp.reqpSfamId
-            WHERE rp.reqId = $r 
+            WHERE rp.reqId = $r and isnull(rp.isDeleted,0) = 0
             ORDER BY reqpId ";
           //    $db->debug=1;
     $rows_emps = $db->Execute($sql);
@@ -195,7 +195,7 @@ if ( $t == 'requests' ) {
   $sql = "SELECT reqsId, reqsCode, reqsName, reqsQuant, reqsPrice, reqsNotes, reqsSfamId, sf.sfamIcon
           FROM RequestServices rs
           LEFT JOIN tblSubFamily sf on sf.sfamId = rs.reqsSfamId
-          WHERE rs.reqId = $r 
+          WHERE rs.reqId = $r and isnull(rs.isDeleted,0) = 0
           ORDER BY reqsId ";
         //    $db->debug=1;
   $rows_emps = $db->Execute($sql);
@@ -260,7 +260,7 @@ if ( $t == 'requests' ) {
   $sql = "SELECT reqpId, reqpArticle, reqpName, reqpQuant, reqpPrice, reqpNotes, reqpSfamId, sf.sfamIcon
           FROM RequestProducts rp
           LEFT JOIN tblSubFamily sf on sf.sfamId = rp.reqpSfamId
-          WHERE rp.reqId = $r 
+          WHERE rp.reqId = $r and isnull(rp.isDeleted,0) = 0
           ORDER BY reqpId ";
         //    $db->debug=1;
   $rows_emps = $db->Execute($sql);

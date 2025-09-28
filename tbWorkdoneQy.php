@@ -7,7 +7,7 @@ if ( isset( $_GET['id'] )) { $id = $_GET['id'];  } else { $id = '0'; };
 
 if ( $t == 'grid' ) {
 
-  $sql = "SELECT worksId, workDone
+  $sql = "SELECT worksId, replace(workDone,'\"','''')
           FROM staffWorks
 		      ORDER BY workDone";
 //    $db->debug=1;

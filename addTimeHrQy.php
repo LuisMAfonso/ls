@@ -37,7 +37,7 @@ if ( $t == 'staff' ) {
 
 }  elseif ( $t == 'times' ) {
 
-  $sql = "SELECT stfTmId, prj.projName, convert(varchar(10),stfTmFrom,120) as tmDay, convert(varchar(5),stfTmFrom,24) as tmFrom,  convert(varchar(5),stfTmTo,24) as TmTo,  convert(varchar(5),timeBreak,24) as TmBreak  , (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, stm.projId
+  $sql = "SELECT stfTmId, prj.projName, convert(varchar(10),stfTmFrom,120) as tmDay, convert(varchar(5),stfTmFrom,24) as tmFrom,  convert(varchar(5),stfTmTo,24) as TmTo,  convert(varchar(5),timeBreak,24) as TmBreak  , (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, stm.projId, isnull(stm.workDone,''), (CASE WHEN isnull(stm.workDone,'') > '' THEN 1 ELSE 0 END)
           FROM staffTime stm
           LEFT JOIN projects prj on prj.projId = stm.projId
           WHERE StaffId = $r and isnull(stm.isDeleted,0) = 0
@@ -58,9 +58,13 @@ if ( $t == 'staff' ) {
     print(' "TmFrom": "'.trim($rows_emps->fields[3]).'", ');
     print(' "TmTo": "'.trim($rows_emps->fields[4]).'", ');
     print(' "TmBreak": "'.trim($rows_emps->fields[5]).'", ');
-    print(' "numHR": "'.trim($rows_emps->fields[6]).'" ');
+    print(' "numHR": "'.trim($rows_emps->fields[6]).'", ');
+    print(' "workDone": "'.trim($rows_emps->fields[8]).'", ');
+    $icon = '';
+    if ( $rows_emps->fields[9] == '1' ) $icon = '<i class=\"mdi mdi-18px mdi-message-bulleted\"></i>';
+    print(' "iNote": "'.$icon.'" ');
     print('}');
-
+ 
     $rows_emps->MoveNext();
   }
   $rows_emps->Close();

@@ -54,6 +54,8 @@ require_once('sidebar.php');
     var wSelected = wSelTime = 0;
     var calendar = null;
     var emp_times = {};
+    var selWorkdone, mtForm = '';
+    var dsWd;
 
     loadPermission();
 
@@ -82,6 +84,7 @@ require_once('sidebar.php');
     dsStaff = new dhx.DataCollection();
     dsTimes = new dhx.DataCollection();
     dsTStaff = new dhx.DataCollection();
+    dsWd = new dhx.DataCollection();
     loadProjects();
 
     function loadProjects() {
@@ -252,7 +255,9 @@ require_once('sidebar.php');
             wSelCnt = 0; 
             addMultiTime(); 
         }
+        if ( id == 'delete' )  { deleteTime(); }
     });
+
     function loadTimes() {
         dsTimes.removeAll();
         dsTimes.load("addProjTimeQy.php?t=times&r="+wSelStaff+"&p="+wSelected).then(function(){
@@ -264,6 +269,20 @@ require_once('sidebar.php');
     timesLayout.getCell("lTbRate").attach(tbTimes);
     timesLayout.getCell("gRates").attach(timesGrid);
 
+    function deleteTime() {
+        wMessage = {
+            header: "Delete ", text: "Confirm time deletion?", buttons: ["no", "yes"], buttonsAlignment: "center",
+        };   
+        dhx.confirm(wMessage).then(function(answer){
+            if (answer) {
+                dhx.ajax.get("addProjTimeWr.php?t=d&r="+wSelTime).then(function (data) {
+                    loadTimes();
+                }).catch(function (err) {
+                        console.log(err);
+                });
+            }
+        });         
+    }
     function addMultiTime(argument) {
         const dhxWindow = new dhx.Window({
             width: 800,
@@ -279,31 +298,43 @@ require_once('sidebar.php');
             cols: [
                 { type: "line",
                   rows: [ 
-                    { id: "lTbTStaff", html: "", height: "60px" },
+                    { id: "lTbTStaff", html: "", height: "140px" },
                     { id: "gTStaff", html: "" },
                   ]
                 },
             ]
         });
 
-        form = new dhx.Form(null, {
+        mtForm = new dhx.Form(null, {
             css: "dhx_widget--bordered",
             padding: 10,
-            cols: [
-                { type: "datepicker", name: "date", label: "Date", labelPosition: "left", labelWidth: "40px", width: "180px", dateFormat: "%Y-%m-%d" },
-                { type: "timepicker", name: "TmFrom", label: "From", labelPosition: "left", labelWidth: "45px", width: "135px", timeFormat: 24,  },
-                { type: "timepicker", name: "TmTo", label: "To", labelPosition: "left", labelWidth: "25px", width: "115px", timeFormat: 24,  },
-                { type: "timepicker", name: "TmBreak", label: "Break", labelPosition: "left", labelWidth: "45px", width: "135px", timeFormat: 24,  },
+            rows: [
                 {
-                    align: "end",
+                    align: "start",
                     cols: [
-                        { type: "button", name: "cancel", view: "link", text: "Cancel", },
-                        { type: "button", name: "send", view: "flat", text: "Save", submit: true, },
+                        { type: "datepicker", name: "date", label: "Date", labelPosition: "left", labelWidth: "40px", width: "180px", dateFormat: "%Y-%m-%d" },
+                        { type: "timepicker", name: "TmFrom", label: "From", labelPosition: "left", labelWidth: "45px", width: "135px", timeFormat: 24,  },
+                        { type: "timepicker", name: "TmTo", label: "To", labelPosition: "left", labelWidth: "25px", width: "115px", timeFormat: 24,  },
+                        { type: "timepicker", name: "TmBreak", label: "Break", labelPosition: "left", labelWidth: "45px", width: "135px", timeFormat: 24,  },
+                        {
+                            align: "end",
+                            cols: [
+                                { type: "button", name: "cancel", view: "link", text: "Cancel", },
+                                { type: "button", name: "send", view: "flat", text: "Save", submit: true, },
+                            ]
+                        }
                     ]
-                }
+                },
+                { type: "textarea", name: "workDone", required: false, label: "Works", labelPosition: "left", labelWidth: "40px" },
             ]
         });
-        form.events.on("click", function(name,e){
+        mtForm.events.on("focus", function(name, value, id) {
+            if ( name == 'workDone' && value == '' ) {
+                console.log(name, value);
+                selWorks();
+            }
+        });    
+        mtForm.events.on("click", function(name,e){
             if ( name == 'cancel' ) {
                 const config = {
                     header: "User ", text: "Confirm cancelation?", buttons: ["no", "yes"], buttonsAlignment: "center"
@@ -322,7 +353,7 @@ require_once('sidebar.php');
                 };     
                 dhx.confirm(config).then(function(answer){
                   if (answer) {
-                    wWorks = '';
+                    wWorks = mtForm.getItem("workDone").getValue();
                     allSel = '[';
                     firstRec = 1;
                     dsTStaff.forEach(function (item, index, array) {
@@ -336,7 +367,7 @@ require_once('sidebar.php');
                     });
                     allSel += ']';
                     console.log(allSel);
-                    wDate = form.getItem("date").getValue();
+                    wDate = mtForm.getItem("date").getValue();
                     dhx.ajax.post("addProjTimeWr.php?t=mWr&p="+wSelected+"&d="+wDate, allSel).then(function (data) {
                         console.log(data);
                     }).catch(function (err) {
@@ -345,7 +376,7 @@ require_once('sidebar.php');
                     loadStaff();
                     loadTimes();
                     loadTimesCal();
-                    form.destructor();
+                    mtForm.destructor();
                     gTStaff.destructor();
                     dhxWindow.destructor(); 
                     };
@@ -372,9 +403,9 @@ require_once('sidebar.php');
         gTStaff.events.on("afterEditEnd", (value, row, column) => {
             console.log(value+" "+row.id+" "+column.id);
 
-            hr1 =  form.getItem("TmFrom").getValue();
-            hr2 =  form.getItem("TmTo").getValue();
-            hrB =  form.getItem("TmBreak").getValue();
+            hr1 =  mtForm.getItem("TmFrom").getValue();
+            hr2 =  mtForm.getItem("TmTo").getValue();
+            hrB =  mtForm.getItem("TmBreak").getValue();
 //            hr = ((hr2.hour*60+hr2.minute)-(hr1.hour*60+hr1.minute))/60;
             if ( value ) bla = JSON.parse(JSON.stringify({ tmFrom: hr1, tmTo: hr2, tmBreak: hrB }));
             if ( !value ) bla = JSON.parse(JSON.stringify({ tmFrom: '', tmTo: '', tmBreak: '' }));
@@ -389,31 +420,118 @@ require_once('sidebar.php');
 
         dhxWindow.attach(tStaffLayout);
 //        tStaffLayout.getCell("lTbTStaff").attach(tbTSTimes);
-        tStaffLayout.getCell("lTbTStaff").attach(form);
+        tStaffLayout.getCell("lTbTStaff").attach(mtForm);
         tStaffLayout.getCell("gTStaff").attach(gTStaff);
 
         dhx.ajax.get("addProjTimeQy.php?t=tf").then(function (data) {
                 var obj = JSON.parse(data);
                 console.log(obj);
-                form.setValue(obj);
+                mtForm.setValue(obj);
         }).catch(function (err) {
-                    console.log(err);
+                console.log(err);
         });
 
         dhxWindow.show();
-
     }
+
+function selWorks(argument) {
+    var wdLayout, tbWd, gWd;
+    const dhxW1 = new dhx.Window({
+        width: 400,
+        height: 550,
+        closable: true,
+        movable: true,
+        modal: true,
+        title: "Work done selection"
+    });
+
+    wdLayout = new dhx.Layout(null, {
+        type: "line",
+        cols: [
+            { type: "line",
+              rows: [ 
+                { id: "lWd", html: "", height: "60px" },
+                { id: "gLWd", html: "" },
+              ]
+            },
+        ]
+    });
+    dhxW1.attach(wdLayout);
+
+    dsWd.removeAll();
+    dsWd.load("mobile/readDb.php?t=workDone").then(function(){
+    });
+
+
+    tbWd = new dhx.Toolbar(null, {
+        css: "dhx_widget--bordered"
+    });
+    tbWd.data.load("mobile/toolbarsQy.php?t=wd_search").then(function(){  });
+    tbWd.events.on("input", function (event, arguments) {
+        console.log(arguments);
+        const value = arguments.toString().toLowerCase();
+        gWd.data.filter(obj => {
+            return Object.values(obj).some(item => 
+                item.toString().toLowerCase().includes(value)
+            );
+        });
+    });
+    tbWd.events.on("click", function(id,e){
+        console.log(id);
+        if ( id == 'select' ) { 
+            selWorkdone = '';
+            firstRec = 1;
+            dsWd.forEach(function (item, index, array) {
+                wWordD = JSON.parse(JSON.stringify(item));
+                if ( wWordD.selWorks == true ) {
+                    if ( firstRec == 0 ) selWorkdone += ', ';
+                    if ( firstRec == 1 ) firstRec = 0;
+                    selWorkdone += wWordD.workDone;
+                }
+            });
+            mtForm.getItem("workDone").setValue(selWorkdone);
+            console.log(selWorkdone);
+            gWd.destructor();
+            tbWd.destructor();
+            dhxW1.destructor(); 
+        }
+    });
+
+    gWd = new dhx.Grid(null, {
+        columns: [
+            { width: 40, id: "id", header: [{ text: "N." }], autoWidth: true, hidden: true },
+            { width:45, id: "selWorks", type: "boolean" ,header: [{ text: "Sel." }], htmlEnable: true, align: "center", hidden: false},               
+            { width: 0, minWidth: 100, id: "workDone", header: [{ text: "Works" }], autoWidth: true },
+        ],
+        editable: true,
+        autoWidth: true,
+        css: "alternate_row",
+        selection: true,
+        data: dsWd
+    });
+    gWd.events.on("cellClick", function(row,column){
+        console.log(row.Id+" - "+column.id);
+
+//        selWorkdone = row.workDone;
+//        mtForm.getItem("workDone").setValue(selWorkdone);
+
+    });
+
+    wdLayout.getCell("lWd").attach(tbWd);
+    wdLayout.getCell("gLWd").attach(gWd);
+    dhxW1.show();
+};
 
     function addEditTime(argument) {
         const dhxWindow = new dhx.Window({
             width: 600,
-            height: 450,
+            height: 515,
             closable: true,
             movable: true,
             modal: true,
             title: "Time registration"
         });
-        const form = new dhx.Form(null, {
+        mtForm = new dhx.Form(null, {
             css: "dhx_widget--bordered",
             padding: 10,
             width: 640,
@@ -425,6 +543,7 @@ require_once('sidebar.php');
                 { type: "timepicker", name: "TmFrom", label: "From", labelPosition: "left", labelWidth: "50px", width: "250px", timeFormat: 24,  },
                 { type: "timepicker", name: "TmTo", label: "To", labelPosition: "left", labelWidth: "50px", width: "250px", timeFormat: 24,  },
                 { type: "timepicker", name: "TmBreak", label: "Break", labelPosition: "left", labelWidth: "50px", width: "250px", timeFormat: 24,  },
+                { type: "textarea", name: "workDone", required: false, label: "Works", labelPosition: "left", labelWidth: "50px" },
                 {
                     align: "end",
                     cols: [
@@ -435,20 +554,26 @@ require_once('sidebar.php');
             ]
         });
 
-        cbStaff = form.getItem("staffId").getWidget();
+        cbStaff = mtForm.getItem("staffId").getWidget();
         cbStaff.data.load("commonQy.php?t=rt").then(function(){
             dhx.ajax.get("addProjTimeQy.php?t=r&id="+wSelTime+"&p="+wSelected+"&s="+wSelStaff).then(function (data) {
                 console.log(data);
                 var obj = JSON.parse(data);
                 console.log(obj);
-                form.setValue(obj);
+                mtForm.setValue(obj);
                 cbStaff.setValue(obj.staffId);
             }).catch(function (err) {
                     console.log(err);
             });
         });
 
-        form.events.on("click", function(name,e){
+        mtForm.events.on("focus", function(name, value, id) {
+            if ( name == 'workDone' && value == '' ) {
+                console.log(name, value);
+                selWorks();
+            }
+        });    
+        mtForm.events.on("click", function(name,e){
             console.log(name+" "+e);
             if ( name == 'cancel' ) {
                 const config = {
@@ -459,7 +584,7 @@ require_once('sidebar.php');
                 };     
                 dhx.confirm(config).then(function(answer){
                     if (answer) {
-                        form.destructor();
+                        mtForm.destructor();
                         dhxWindow.destructor();
                     }
                 });         
@@ -473,12 +598,12 @@ require_once('sidebar.php');
                 };     
                 dhx.confirm(config).then(function(answer){
                     if (answer) {
-                        const send = form.send("addProjTimeWr.php?t=f&p="+wSelected, "POST").then(function(data){
+                        const send = mtForm.send("addProjTimeWr.php?t=f&p="+wSelected, "POST").then(function(data){
 //                            message = JSON.parse(data);
                             console.log(data);
                             loadTimes();
                             loadTimesCal();
-                            form.destructor();
+                            mtForm.destructor();
                             dhxWindow.destructor();
                         });
                     };
@@ -486,9 +611,8 @@ require_once('sidebar.php');
             };
         });
 
-        dhxWindow.attach(form);
+        dhxWindow.attach(mtForm);
         dhxWindow.show();
-
     }
 
     function loadPermission() {

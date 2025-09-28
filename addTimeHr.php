@@ -132,6 +132,10 @@ require_once('sidebar.php');
 
     pLayout.getCell("staff").attach(pGridStaff);
 
+    function noteTemplate(value, row, col) {
+        return `${row.workDone}`;
+    }
+
     function loadTimesCal() {
         dhx.ajax.get("addTimeHrQy.php?t=ut&r="+wSelected).then(function (data) {
              emp_times = JSON.parse(data);
@@ -174,6 +178,7 @@ require_once('sidebar.php');
             { width: 60, id: "TmTo", header: [{ text: "To" }], autoWidth: true, align: "left" },
             { width: 60, id: "TmBreak", header: [{ text: "Break" }], autoWidth: true, align: "left" },
             { width: 60, id: "numHR", header: [{ text: "Total" }], autoWidth: true, align: "right", type: "number", numberMask: { maxDecLength: 1, minDecLength: 1, decSeparator: ".", groupSeparator: "," } },
+            { width: 40, id: "iNote", header: [{ text: "W." }], align: "center", htmlEnable: true, tooltip: true, tooltipTemplate: noteTemplate  },
         ],
         selection:"row",
         adjust: "true", 

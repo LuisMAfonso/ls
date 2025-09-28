@@ -47,7 +47,7 @@ if ( $t == 'projects' ) {
           FROM staffTime stm
           INNER JOIN staff stf on stf.staffId = stm.StaffId
           INNER JOIN tblCompPosition cp on cp.posId = isnull(staffPosition,1)
-          WHERE stm.projId = $p 
+          WHERE stm.projId = $p and isnull(stm.isDeleted,0) = 0
           GROUP BY stf.staffId, stf.staffName, cp.posName
           ORDER BY staffName desc ";
 //    $db->debug=1;
@@ -108,7 +108,7 @@ if ( $t == 'projects' ) {
   $sql = "SELECT stfTmId, stf.staffName, convert(varchar(10),stfTmFrom,120) as tmDay, convert(varchar(5),stfTmFrom,24) as tmFrom,  convert(varchar(5),stfTmTo,24) as TmTo,  convert(varchar(5),timeBreak,24) as TmBreak , (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, stm.projId
           FROM staffTime stm
           INNER JOIN staff stf on stf.staffId = stm.StaffId
-          WHERE stm.projId = $p ";
+          WHERE stm.projId = $p  and isnull(stm.isDeleted,0) = 0 ";
   if ( $r != 0 ) $sql .= " AND stm.staffId = $r ";
   $sql .= " ORDER BY stfTmFrom desc";
 //  $db->debug=1;
@@ -142,10 +142,10 @@ if ( $t == 'projects' ) {
     $rows_emps = $db->Execute($sql);
     $projName = trim($rows_emps->fields[0]);
 
-    $sql = "SELECT stfTmId,prj.projName, stm.StaffId, convert(varchar(10),stfTmFrom,120) as tmDay, convert(varchar(5),stfTmFrom,24) as tmFrom,  convert(varchar(5),stfTmTo,24) as tmTo, convert(varchar(5),timeBreak,24) as tmBreak
+    $sql = "SELECT stfTmId,prj.projName, stm.StaffId, convert(varchar(10),stfTmFrom,120) as tmDay, convert(varchar(5),stfTmFrom,24) as tmFrom,  convert(varchar(5),stfTmTo,24) as tmTo, convert(varchar(5),timeBreak,24) as tmBreak, workDone
             FROM staffTime stm
             INNER JOIN projects prj on prj.projId = stm.projId
-            WHERE stfTmId ='$id' ";
+            WHERE stfTmId ='$id'  and isnull(stm.isDeleted,0) = 0 ";
 //    $db->debug=1;
     $rows_emps = $db->Execute($sql);
 
@@ -158,6 +158,7 @@ if ( $t == 'projects' ) {
       $dataJson->TmFrom = trim($rows_emps->fields[4]);
       $dataJson->TmTo = trim($rows_emps->fields[5]);
       $dataJson->TmBreak = trim($rows_emps->fields[6]);
+      $dataJson->workDone = trim($rows_emps->fields[7]);
       $dataJson->exist = true;
     } else {
       $dataJson->Id = 0;
@@ -171,7 +172,7 @@ if ( $t == 'projects' ) {
 
   $sql = "SELECT convert(varchar(10),[stfTmFrom],120) as dtTime, sum(datediff(hh, stfTmFrom, stfTmTo)) as qtHours
           FROM staffTime
-          where projId = $p ";
+          where projId = $p  and isnull(isDeleted,0) = 0 ";
   if ( $r != 0 ) $sql .= " AND staffId = $r ";
   $sql .= " GROUP BY convert(varchar(10),[stfTmFrom],120)
           ORDER BY convert(varchar(10),[stfTmFrom],120) ";

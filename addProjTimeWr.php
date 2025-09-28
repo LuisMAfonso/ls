@@ -19,9 +19,10 @@ if ( $t == 'f' && $post[Id] == 0 ) {
     $timeFrom  = $post[date].' '.$post[TmFrom];
     $timeTo    = $post[date].' '.$post[TmTo];
     $timeBreak = $post[TmBreak];
+    $workDone = $post[workDone];
 
-		$sql = "INSERT INTO staffTime (StaffId, projId, stfTmFrom, stfTmTo, timeBreak, isDeleted, createStamp, createUser)
-				VALUES ('".$post[staffId]."', '".$p."', '".$timeFrom."', '".$timeTo."', '".$timeBreak."', 0, getdate(), '$user' ) ";
+		$sql = "INSERT INTO staffTime (StaffId, projId, stfTmFrom, stfTmTo, timeBreak, workDone,isDeleted, createStamp, createUser)
+				VALUES ('".$post[staffId]."', '".$p."', '".$timeFrom."', '".$timeTo."', '".$timeBreak."', '".$workDone."', 0, getdate(), '$user' ) ";
 		$db->debug=1;
 		$rows_emps = $db->Execute($sql);
 }
@@ -29,12 +30,14 @@ if ( $t == 'f' && $post[Id] != 0 ) {
     $timeFrom  = $post[date].' '.$post[TmFrom];
     $timeTo    = $post[date].' '.$post[TmTo];
     $timeBreak = $post[TmBreak];
+    $workDone = $post[workDone];
 
         $sql = "UPDATE staffTime 
                     SET staffId        = '".$post[staffId]."', 
                         stfTmFrom      = '".$timeFrom."', 
                         stfTmTo        = '".$timeTo."', 
                         timeBreak      = '".$timeBreak."', 
+                        workDone      = '".$workDone."', 
                         modifyStamp = getdate(),
                         modifyUser  = '$user'
                 WHERE stfTmId = ".$post[Id];
@@ -61,6 +64,18 @@ if ( $t == 'mWr' ) {
     }
 
 }
+
+if ( $t == 'd' ) {
+    $sql = "UPDATE staffTime 
+                SET isDeleted = 1, 
+                    deleteStamp = getdate(),
+                    deleteUser  = '$user'
+            WHERE stfTmId = ".$r;
+    $db->debug=1;
+    $rows_emps = $db->Execute($sql);
+}
+
+
 function getPost()
 {
     if(!empty($_POST))

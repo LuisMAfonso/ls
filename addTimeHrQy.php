@@ -37,7 +37,7 @@ if ( $t == 'staff' ) {
 
 }  elseif ( $t == 'times' ) {
 
-  $sql = "SELECT stfTmId, prj.projName, convert(varchar(10),stfTmFrom,120) as tmDay, convert(varchar(5),stfTmFrom,24) as tmFrom,  convert(varchar(5),stfTmTo,24) as TmTo,  convert(varchar(5),timeBreak,24) as TmBreak  , (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, stm.projId, isnull(stm.workDone,''), (CASE WHEN isnull(stm.workDone,'') > '' THEN 1 ELSE 0 END)
+  $sql = "SELECT stfTmId, prj.projName, convert(varchar(10),stfTmFrom,120) as tmDay, convert(varchar(5),stfTmFrom,24) as tmFrom,  convert(varchar(5),stfTmTo,24) as TmTo,  convert(varchar(5),timeBreak,24) as TmBreak  , (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, stm.projId, isnull(replace(stm.workDone, char(10),'<br>'),''), (CASE WHEN isnull(stm.workDone,'') > '' THEN 1 ELSE 0 END)
           FROM staffTime stm
           LEFT JOIN projects prj on prj.projId = stm.projId
           WHERE StaffId = $r and isnull(stm.isDeleted,0) = 0

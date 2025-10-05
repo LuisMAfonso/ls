@@ -83,7 +83,7 @@ if ( $t == 'proj' ) {
 
 } elseif ( $t == 'detproj' ) { 
 
-  $sql = "SELECT stfTmId, stf.staffName, convert(varchar(10),stfTmFrom,120) as tmDay, (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, workDone
+  $sql = "SELECT stfTmId, stf.staffName, convert(varchar(10),stfTmFrom,120) as tmDay, (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, replace(workDone,char(10),'<br>')
           FROM staffTime stm
           INNER JOIN staff stf on stf.staffId = stm.StaffId
           INNER JOIN projects prj on prj.projId = stm.projId
@@ -114,7 +114,7 @@ if ( $t == 'proj' ) {
 
 } elseif ( $t == 'detstaff' ) { 
 
-  $sql = "SELECT stfTmId, prj.projName, convert(varchar(10),stfTmFrom,120) as tmDay, (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, workDone
+  $sql = "SELECT stfTmId, prj.projName, convert(varchar(10),stfTmFrom,120) as tmDay, (datediff(mi,stftmFrom, stfTMTo)-datediff(mi,0,timeBreak))/60.0 as numHr, replace(workDone,char(10),'<br>')
           FROM staffTime stm
           INNER JOIN staff stf on stf.staffId = stm.StaffId
           INNER JOIN projects prj on prj.projId = stm.projId

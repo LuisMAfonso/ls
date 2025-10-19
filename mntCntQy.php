@@ -13,7 +13,7 @@ if ( $t == 'contacts' ) {
             SELECT ct.contId, contName, contCity, min(isnull(cf.createstamp,'1900-01-01')) as createContact
                 FROM contacts ct
             left  join contactsFrom cf on cf.contId = ct.contId and isnull(cf.isDeleted,0) = 0
-                where isnull(ct.isDeleted,0) = 0
+              where isnull(ct.isDeleted,0) = 0
             GROUP BY ct.contId, contName, contCity
           ) a
           LEFT JOIN  contactsFrom cf on cf.contId = a.contId and isnull(cf.isDeleted,0) = 0 and cf.createStamp = a.createContact

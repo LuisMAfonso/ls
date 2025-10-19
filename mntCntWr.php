@@ -49,6 +49,15 @@ if ( $t == 'cnt' && $post[Id] == 0 ) {
         $db->debug=1;
         $rows_emps = $db->Execute($sql);
 }
+if ( $t == 'd' ) {
+    $sql = "UPDATE contacts 
+                SET isDeleted = 1, 
+                    deleteStamp = getdate(),
+                    deleteUser  = '$user'
+            WHERE contId = ".$r;
+    $db->debug=1;
+    $rows_emps = $db->Execute($sql);
+}
 
 
 function getPost()

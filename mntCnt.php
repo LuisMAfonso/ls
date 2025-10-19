@@ -127,8 +127,9 @@ require_once('sidebar.php');
     });
     tbContacts.events.on("click", function(id,e){
         console.log(id);
-        if ( id == 'edit' ) { addEditUser(); }
-        if ( id == 'add' )  { wSelected = 0; addEditUser(); }
+        if ( id == 'edit' ) { addEditContact(); }
+        if ( id == 'add' )  { wSelected = 0; addEditContact(); }
+        if ( id == 'delete' ) { deleteContact(); }
     });
 	pLayout.getCell("lTbContact").attach(tbContacts);
 
@@ -173,7 +174,21 @@ require_once('sidebar.php');
 
     mainLayout.getCell("workplace").attach(pLayout);
 
-    function addEditUser(argument) {
+    function deleteContact() {
+        wMessage = {
+            header: "Delete ", text: "Confirm Contact deletion?", buttons: ["no", "yes"], buttonsAlignment: "center",
+        };   
+        dhx.confirm(wMessage).then(function(answer){
+            if (answer) {
+                dhx.ajax.get("mntCntWr.php?t=d&r="+wSelected).then(function (data) {
+                    loadContacts();
+                }).catch(function (err) {
+                        console.log(err);
+                });
+            }
+        });         
+    }
+    function addEditContact(argument) {
         const dhxWindow = new dhx.Window({
             width: 680,
             height: 560,
